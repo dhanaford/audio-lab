@@ -1,5 +1,42 @@
 <template>
   <el-row>
+    <el-row type="flex" justify="center">
+      <el-col :span="3">
+        <el-button
+          type="success"
+          v-model="state.play"
+          @click="start(state.play)"
+          plain>{{state.play}}
+        </el-button>
+      </el-col>
+    </el-row>
+    <el-row type="flex" justify="center" :gutter="20">
+      <el-col :span="8">
+        <el-select
+          v-model="state.selectedSynth"
+          placeholder="Change Synth">
+          <el-option
+            v-for="synth in state.synth"
+            :value="synth.value"
+            :label="synth.label"
+            :checked="synth.checked"
+            :key="synth.value">{{synth.label}}
+          </el-option>
+        </el-select>
+      </el-col>
+      <div class="indicator" :class="{active: state.indicator}"></div>
+      <el-col :span="10">
+        <template v-for="(sound, idx) in instruments[0]">
+          <el-checkbox-button
+            
+            v-model="sound.checked"
+            :key="idx"
+            :label="sound.label"
+            @change="toggleInstrument(idx, $event)">
+          </el-checkbox-button>
+        </template>
+      </el-col>
+    </el-row>
     <el-row type="flex" justify="center" :gutter="20">
       <el-col :span="8">
         <el-select
@@ -15,128 +52,69 @@
         </el-select>
       </el-col>
       <el-col :span="10">
-        <div class="instrument">
-              <div v-for="(instrument, idx) in instruments">
-
-              <el-checkbox-button
-                v-model="instrument.checked"
-                :key="idx"
-                :label="instrument.label"
-                @change="toggleInstrument(idx, $event)"
-               >
-              </el-checkbox-button>
-            </div>
-          <!-- <template v-for="instrument in instruments">
-            <el-checkbox-group v-model="selectedInstrument.name">
-                <el-checkbox-button
-                  v-for="beat in beats"
-                  :key="beat"
-                  :label="beat"
-                 >
-                </el-checkbox-button>
-            </el-checkbox-group>
-        </template> -->
-          <!-- <el-radio-group v-model="instrument.name">
-              <el-radio-button
-                v-for="instrument in instruments"
-                :index="instrument"
-                :label="instrument.value"
-               >
-              </el-radio-button>
-          </el-radio-group> -->
-            <input type="checkbox" />
-            <input type="checkbox" />
-            <input type="checkbox" />
-            <input type="checkbox" />
-            <input type="checkbox" />
-            <input type="checkbox" />
-            <input type="checkbox" />
-            <input type="checkbox" />
-        </div>
-    </el-col>
+        <template v-for="(soundTwo, idx2) in instruments[1]">
+          <el-checkbox-button
+            v-model="soundTwo.checked"
+            :key="idx2"
+            :label="soundTwo.label"
+            @change="toggleInstrument(idx2, $event)">
+          </el-checkbox-button>
+        </template>
+      </el-col>
+    </el-row>
+    <el-row type="flex" justify="center" :gutter="20">
+      <el-col :span="8">
+        <el-select
+          v-model="state.selectedSynth"
+          placeholder="Change Synth">
+          <el-option
+            v-for="synth in state.synth"
+            :value="synth.value"
+            :label="synth.label"
+            :key="synth.value">{{synth.label}}
+          </el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="10">
+        <template v-for="(soundThree, idx3) in instruments[2]">
+          <el-checkbox-button
+            v-model="soundThree.checked"
+            :key="idx3"
+            :label="soundThree.label"
+            @change="toggleInstrument(idx3, $event)">
+          </el-checkbox-button>
+        </template>
+      </el-col>
+    </el-row>
+    <el-row type="flex" justify="center" :gutter="20">
+      <el-col :span="6">
+        <label>Increase Tempo</label>
+        <template>
+          <div class="block">
+            <el-slider
+              v-model="state.tempo"
+              :min="0" :max="192"
+              @change="changeTempo"
+              >
+            </el-slider>
+          </div>
+        </template>
+      </el-col>
+      <el-col :span="4">
+        <el-input-number
+          v-model.number="state.tempo"
+          :min="0"
+          :max="192"
+          size="small"
+          @change="changeTempo">
+        </el-input-number>
+        <label>BPM</label>
+      </el-col>
+    </el-row>
   </el-row>
-  <el-row type="flex" justify="center" :gutter="20">
-    <el-col :span="8">
-      <el-select
-        v-model="state.selectedSynth"
-        placeholder="Change Synth">
-        <el-option
-          v-for="synth in state.synth"
-          :value="synth.value"
-          :label="synth.label"
-          :key="synth.value">{{synth.label}}
-        </el-option>
-      </el-select>
-    </el-col>
-    <el-col :span="10">
-      <div class="instrument">
-        <input type="checkbox" />
-        <input type="checkbox" />
-        <input type="checkbox" />
-        <input type="checkbox" />
-        <input type="checkbox" />
-        <input type="checkbox" />
-        <input type="checkbox" />
-        <input type="checkbox" />
-      </div>
-    </el-col>
-  </el-row>
-  <el-row type="flex" justify="center" :gutter="20">
-    <el-col :span="8">
-      <el-select
-        v-model="state.selectedSynth"
-        placeholder="Change Synth">
-        <el-option
-          v-for="synth in state.synth"
-          :value="synth.value"
-          :label="synth.label"
-          :key="synth.value">{{synth.label}}
-        </el-option>
-      </el-select>
-    </el-col>
-    <el-col :span="10">
-      <div class="instrument">
-        <input type="checkbox" />
-        <input type="checkbox" />
-        <input type="checkbox" />
-        <input type="checkbox" />
-        <input type="checkbox" />
-        <input type="checkbox" />
-        <input type="checkbox" />
-        <input type="checkbox" />
-      </div>
-    </el-col>
-  </el-row>
-  <el-row type="flex" justify="center" :gutter="20">
-    <el-col :span="6">
-      <label>Increase Tempo</label>
-      <template>
-        <div class="block">
-          <el-slider
-            v-model.number="state.tempo"
-            :min="0" :max="192"
-            >
-          </el-slider>
-        </div>
-      </template>
-    </el-col>
-    <el-col :span="4">
-    <el-input-number
-      v-model.number="state.tempo"
-      :min="0"
-      :max="192"
-      size="small"
-      @change="changeTempo">
-      </el-input-number>
-      <label>BPM</label>
-    </el-col>
-  </el-row>
-</el-row>
 </template>
 <script>
 import Tone from 'tone'
-
-const beats = [1, 2, 3, 4, 5, 6, 7, 8]
 
 const synths = [
   new Tone.Synth(),
@@ -161,27 +139,42 @@ export default {
   data () {
     return {
       index: 0,
-      beats: beats,
       selectedInstrument: [],
-      instruments: [
-        { label: '1', value: 1, checked: false },
-        { label: '2', value: 2, checked: false },
-        { label: '3', value: 3, checked: false },
-        { label: '4', value: 4, checked: false },
-        { label: '5', value: 5, checked: false },
-        { label: '6', value: 6, checked: false },
-        { label: '7', value: 7, checked: false },
-        { label: '8', value: 8, checked: false }
-      ],
-      // instruments: [
-      //   {
-      //     instrumentOne: [
-      //       { name: 'instrument one', amount: 8 }
-      //     ]
-      //   }
-      // ],
+      instruments: {
+        0: [
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false }
+        ],
+        1: [
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false }
+        ],
+        2: [
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false },
+          { label: ' ', checked: false }
+        ]
+      },
       state: {
         tempo: 90,
+        play: 'start',
         indicator: false,
         synth: [
           { label: 'Synth', value: 'Synth' },
@@ -194,8 +187,6 @@ export default {
   },
   mounted () {
     // connect each synth to amplifier
-    Tone.Transport.scheduleRepeat(this.repeat, '8n')
-    Tone.Transport.start()
   },
   methods: {
     repeat (time) {
@@ -203,19 +194,23 @@ export default {
       // if (step === this.index) {
       //   this.state.indicator = true
       // }
-      // let input = this.instrument.name
-        this.instruments.forEach((val, i) => {
-          let synth = synths[i]
-          let note = notes[i]
-          // let row = this.rows[i]
-          // let input = row.querySelector(`input:nth-child(${step + 1})`)
-          if (val.checked && (i === step)) synth.triggerAttackRelease(note, '8n', time)
+      for (const [key, value] of Object.entries(this.instruments)) {
+        let synth = synths[key]
+        let note = notes[key]
+        value.forEach((i, val) => {
+          console.log(val)
+          if (val === step) {
+            // console.log(true)
+            this.state.indicator = true
+          } else {
+            this.state.indicator = false
+          }
+          if (i.checked && (val === step)) synth.triggerAttackRelease(note, '8n', time)
         })
-        this.index++
+      }
+      this.index++
     },
     toggleInstrument (idx, e) {
-      console.log(idx)
-      console.log(e)
       if (e) {
         this.selectedInstrument.push(e)
       } else {
@@ -224,13 +219,20 @@ export default {
     },
     changeTempo () {
       Tone.Transport.bpm.value = this.state.tempo
+    },
+    start (val) {
+      // connect each synth to amplifier
+      Tone.Transport.scheduleRepeat(this.repeat, '8n')
+      if (val === 'start') {
+        this.state.play = 'stop'
+        Tone.Transport.start()
+      } else {
+        this.state.play = 'start'
+        Tone.Transport.stop()
+      }
     }
   },
   computed: {
-    rows () {
-      let rows = document.querySelectorAll('.instrument')
-      return rows
-    },
     indicatorPosition () {
       return Tone.Transport.scheduleRepeat(this.repeat, '8n')
     }
@@ -239,7 +241,13 @@ export default {
 </script>
 
 <style scoped>
-  .actve {
+  .indicator {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 10px;
+  }
+  .active {
     background-color: red;
   }
   .el-select {
