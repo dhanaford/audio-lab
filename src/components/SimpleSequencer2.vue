@@ -109,13 +109,7 @@ export default {
     }
   },
   mounted () {
-    this.gain.toMaster()
-    console.log('refs: ' + this.$refs)
-
-    let dial = new Nexus.Rack(this.$refs.synth, {
-      attribute: 'data-id'
-    })
-    console.log(dial)
+    this.initSynth()
     let volume = new Tone.Gain().toMaster()
     let masterVolume = new Nexus.Slider(this.$refs.volume, {
       size: [120, 20],
@@ -130,18 +124,22 @@ export default {
       volume = v
       // console.log('volume change ' + volume)
     })
-    synth = new Tone[this.currentSynth]().toMaster()
+    // this.synth = new Tone[this.currentSynth]().toMaster()
 
   },
   methods: {
-    playKey (v) {
-      // synth
-    },
     initSynth (v) {
-      // let currentSynth  = v
-      // console.log(v)
-      synth = new Tone[this.currentSynth]().toMaster()
+      let synth = new Tone[this.currentSynth]().toMaster()
       console.log(synth)
+      // if (synth) {
+      //   synth.dispose()
+      // } else {
+      //   console.log('false')
+      // }
+      let dial = new Nexus.Rack(this.$refs.synth, {
+        attribute: 'data-id'
+      })
+      console.log(dial)
       let piano = new Nexus.Piano(this.$refs.piano, {
         'size': [400, 200],
         'mode': 'toggle',
@@ -152,38 +150,11 @@ export default {
         console.log(v.note)
         synth.triggerAttackRelease(v.note, '8N')
       })
-      // if (this.synth) {
-      //   this.synth.disconnect(this.gain)
-      // }
-    let synth = synth.toMaster()
-    }
-  },
-  computed: {
-    // masterVolume: {
-    //   get () {
-    //     return new Tone.Volume().toMaster()
-    //   },
-    //   set (v) {
-    //     volume.volume = v
-    //   }
-    // },
-    slider () {
-      return new Nexus.Dial()
     }
   }
 }
 </script>
 
 <style scoped>
-#power {
-  width:40px;
-  height:17px;
-  margin:15px 0px;
-}
 
-#echo {
-  width:200px;
-  height:20px;
-  margin:5px 3px;
-}
 </style>
